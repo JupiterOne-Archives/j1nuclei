@@ -29,7 +29,7 @@ def process_targets(query_file_path: str,
     target_keys = []
 
     for q in queries["queries"]:
-        logger.debug("Processing query {}".format(q["name"]))
+        logger.debug(f"Processing query {q['name']}")
 
         data = graph_query(q["query"], None)
 
@@ -47,14 +47,14 @@ def process_targets(query_file_path: str,
                             targets.append(r.copy())
                             target_keys.append(r["key"])
         else:
-            logger.error("Error retrieving results for query name {}".format(q["name"]))
+            logger.error(f"Error retrieving results for query name {q['name']}")
 
-        print("Query - {} found {} targets".format(q["name"], q_target_count))
+        print(f"Query - {q['name']} found {q_target_count} targets")
 
-    print("Found a total of {} targets to scan".format(len(targets)))
+    print(f"Found a total of {len(targets)} targets to scan")
 
     # saving data map
-    logger.info("Saving target map file for {} targets".format(len(targets)))
+    logger.info(f"Saving target map file for {len(targets)} targets")
     save_runner_mapping(targets, "report_map.json")
 
     run_nuclei_concurrent(targets, nb_concurrent)
@@ -64,7 +64,7 @@ def process_targets(query_file_path: str,
 
 
 def save_runner_mapping(runner_map: Dict, filepath):
-    logger.debug("Saving runner mapping to {}".format(filepath))
+    logger.debug(f"Saving runner mapping to {filepath}")
     with open(filepath, "w") as outfile:
         json.dump(runner_map, outfile)
 
@@ -84,8 +84,7 @@ def process_runner_map(filepath: str):
     job_payload["relationships"] = []
 
     for j1_target_context in runner_map:
-        logger.debug("Ingesting data for target {} from {}".format(j1_target_context["target"],
-                                                                   j1_target_context["nuclei_report_file"]))
+        logger.debug(f"Ingesting data for target {j1_target_context['target']} from {j1_target_context['nuclei_report_file']}")
 
         target_payload = parse_target_report(j1_target_context, job_keys)
         if target_payload:
@@ -94,7 +93,7 @@ def process_runner_map(filepath: str):
 
     ingest_data_and_finalize(job_id, job_payload)
 
-    logger.debug("Done processing runner map {}".format(filepath))
+    logger.debug(f"Done processing runner map {filepath}")
 
 
 def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, job_keys: List) -> Dict:
@@ -120,7 +119,7 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
 
         # if we already have the entity in the batch upload we can skip
         # this happens when entity has multiple findings
-        # we only add 1 instance but we add all relationships/findings to it
+        # we only add 1 instance, but we add all relationships/findings to it
         if finding_entity_key not in job_keys:
             job_keys.append(finding_entity_key)
 
@@ -137,7 +136,7 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
             entities.append(finding_entity)
 
         # Vulnerability entity
-        vul_entity_key = "nuclei_id_{}".format(nuclei_finding["template-id"])
+        vul_entity_key = f"nuclei_id_{nuclei_finding['template-id']}"
 
         # if we already created it we skip
         if vul_entity_key not in job_keys:
@@ -163,7 +162,7 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
         # relationship
 
         # Target - HAS - Finding
-        has_relationship_key = "{0}|{1}".format(j1_target_context["key"], finding_entity_key)
+        has_relationship_key = f"{j1_target_context['key']}_{finding_entity_key}"
 
         if has_relationship_key not in job_keys:
             job_keys.append(has_relationship_key)
@@ -184,7 +183,7 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
             relationships.append(has_relationship)
 
         # Finding - IS - Vulnerability
-        is_relationship_key = "{0}|{1}".format(finding_entity_key, vul_entity_key)
+        is_relationship_key = f"{finding_entity_key}_{vul_entity_key}"
 
         if is_relationship_key not in job_keys:
             job_keys.append(is_relationship_key)
@@ -216,7 +215,7 @@ def parse_target_report(j1_target_context: Dict, job_keys: List) -> Dict:
 
     nuclei_report_filename = j1_target_context["nuclei_report_file"]
 
-    logger.debug("Processing {}".format(nuclei_report_filename))
+    logger.debug(f"Processing {nuclei_report_filename}")
 
     if os.path.exists(nuclei_report_filename):
         with open(nuclei_report_filename, "r") as nuclei_report:
@@ -226,7 +225,7 @@ def parse_target_report(j1_target_context: Dict, job_keys: List) -> Dict:
                 findings.append(json.loads(line))
 
         if len(findings) > 0:
-            print("Target key {} has {} issues".format(j1_target_context["key"], len(findings)))
+            print(f"Target key {j1_target_context['key']} has {len(findings)} issues")
             return marshal_nuclei_to_j1payload(j1_target_context, findings, job_keys)
     else:
         return None

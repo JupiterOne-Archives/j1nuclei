@@ -113,9 +113,8 @@ class CLI:
         j1nuclei.config.persister_scope = config_namespace.scope
 
         if not j1nuclei.config.j1_api_key:
-            print("Error retrieving API key from environment variable {}. The api key must be set".format(
-                (config_namespace.apikey_env)))
-            raise Exception("Unable to retrieve api key from {}".format(j1nuclei.config.j1_api_key))
+            print(f"Error retrieving API key from environment variable {config_namespace.apikey_env}. The api key must be set")
+            raise Exception(f"Unable to retrieve api key from {config_namespace.apikey_env}")
 
 
 def main(argv=None):
