@@ -1,0 +1,13 @@
+
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/j1nuclei.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+j1nuclei/__pycache__/__main__.cpython-310.pyc
+j1nuclei/__pycache__/cli.cpython-310.pyc
+j1nuclei/__pycache__/config.cpython-310.pyc
+j1nuclei/__pycache__/j1api.cpython-310.pyc
+j1nuclei/__pycache__/j1auth.cpython-310.pyc
+j1nuclei/__pycache__/nucleirunner.cpython-310.pyc
+j1nuclei/__pycache__/runner.cpython-310.pyc
