@@ -18,8 +18,7 @@ class CLI:
     def _build_parser(self):
         """
         :rtype: argparse.ArgumentParser
-        :return: A cartography argument parser. Calling parse_args on the argument parser will return an object which
-            implements the cartography.config.Config interface.
+        :return: argument parser.
         """
         parser = argparse.ArgumentParser(
             prog=self.prog,
