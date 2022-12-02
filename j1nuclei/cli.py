@@ -22,8 +22,8 @@ class CLI:
         """
         parser = argparse.ArgumentParser(
             prog=self.prog,
-            description="J1Nuclei showcase how Jupiterone platform can automate running ProjectDiscovery nuclei security scanner",
-            epilog="For more information on our platform API go to https://community.askj1.com/kb/articles/794-jupiterone-api"
+            description="J1Nuclei demonstrates how you can use JupiterOne to automate running ProjectDiscovery's Nuclei security scanner.",
+            epilog="For more information on JupiterOne's API visit https://community.askj1.com/kb/articles/794-jupiterone-api"
         )
         parser.add_argument(
             '-a',
@@ -31,7 +31,7 @@ class CLI:
             type=str,
             required=True,
             help=(
-                'Required - Set the Jupiterone account to collect targets and store results.'
+                'Required - Set the JupiterOne account to collect targets and store results.'
                 'To find the ID in your JupiterOne account go to Settings > Integration > {integration name} > {configuration name} > value in the ID field.'
             ),
         )
@@ -65,7 +65,7 @@ class CLI:
             default="J1_API_TOKEN",
             help=(
                 'Optional - They environment variable used to retrieve the JupiterOne API Key. By default J1_API_TOKEN is used'
-                'To create API key follow instructions from:'
+                'To create an API key follow instructions from:'
                 'https://community.askj1.com/kb/articles/785-creating-user-and-account-api-keys#create-account-level-api-keys'
             ),
         )

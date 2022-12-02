@@ -28,23 +28,43 @@ More information about J1QL is available from [Introduction to JupiterOne Query 
 The J1QL and knowledge graph can answer many questions, here's a few from the data set produced by J1Nuclei
 
 #### How many nuclei issues do I have?
-```FIND Finding as w where w._type="nuclei_finding" return count(w) as value```
+```
+FIND Finding as f
+WHERE f._type="nuclei_finding"
+RETURN count(f) as value
+```
 
 #### How many my critical assets in production are affected?
 ```
-FIND * as t that HAS Finding as f WHERE f._type="nuclei_finding" AND
-t.tag.Production = true AND
-t.classification = "critical"
-return count(f) as value
+FIND *
+WITH tag.Production = true AND classification = 'critical' AS asset
+THAT HAS >> Finding
+WITH _type = 'nuclei_finding'
+RETURN COUNT(asset)
 ```
 #### How many endpoints are affected?
-```FIND UNIQUE * as t that HAS Finding WITH _type="nuclei_finding" return count(t) as value```
+```
+FIND UNIQUE * as asset
+THAT HAS >> Finding
+WITH _type = 'nuclei_finding'
+RETURN
+```
 
 #### Criticality of the issues?
-```FIND Finding as f where f._type = "nuclei_finding" return f.severity as x, count(f) as y```
+```
+FIND Finding as f
+WHERE f._type = "nuclei_finding"
+RETURN f.severity as x, count(f) as y
+```
 
 #### What are my issues (graph view)?
-```FIND * as t that relates to Finding WITH _type="nuclei_finding" return TREE```
+```
+FIND *
+THAT HAS >> Finding
+THAT IS >> Vulnerability as vul
+WHERE vul._type = 'nuclei_vulnerability'
+RETURN TREE
+```
 
 ### 2. Insight Dashboard
 You can also create dashboards using our console Insights. For starters, you can use the one we provided as part
