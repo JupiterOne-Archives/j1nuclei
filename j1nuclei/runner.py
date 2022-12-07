@@ -31,7 +31,7 @@ def process_targets(query_file_path: str,
     for q in queries["queries"]:
         logger.debug(f"Processing query {q['name']}")
 
-        data = graph_query(q["query"], None)
+        data = graph_query(q["query"])
 
         q_target_count = 0
 

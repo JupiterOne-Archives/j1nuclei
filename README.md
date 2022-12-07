@@ -68,7 +68,7 @@ RETURN TREE
 
 ### 2. Insight Dashboard
 You can also create dashboards using our console Insights. For starters, you can use the one we provided as part
-of this tool [nuclei_portal_schema.json](nuclei_portal_schema.json). Steps to create, edit, and upload your own
+of this tool [nuclei_portal_schema.json](dashboard_nuclei_portal.json). Steps to create, edit, and upload your own
 dashboard are available from [Getting started with insights-dashboards](https://community.askj1.com/kb/articles/812-getting-started-with-insights-dashboards).
 We also shared many dashboards in our open-source repository from [https://github.com/JupiterOne/insights-dashboards](https://github.com/JupiterOne/insights-dashboards).
 

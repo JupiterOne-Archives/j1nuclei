@@ -2,6 +2,9 @@ import concurrent
 import logging
 import requests
 import time
+from jupiterone import JupiterOneClient
+
+import j1nuclei.config
 from j1nuclei.j1auth import get_auth_headers
 from typing import Dict, List
 
@@ -83,32 +86,8 @@ def create_persister_job() -> str:
         raise Exception(f"Error creating J1 job got code error {response.status_code}")
 
 
-def graph_query(query: str, query_variables: ()) -> ():
-    api_url = "https://api.us.jupiterone.io/graphql"
+def graph_query(query: str) -> ():
+    j1_client = JupiterOneClient(j1nuclei.config.j1_account, j1nuclei.config.j1_api_key)
 
-    inner_query = """
-        query J1QL(
-          $query: String!
-          $variables: JSON
-        ) {
-          queryV1(
-            query: $query
-            variables: $variables){ data }
-        }
-    """
-    variables = {
-                "query": query,
-                "variables": query_variables
-    }
-
-    payload = {"query": inner_query,
-               "variables": variables}
-
-    response = requests.post(api_url, json=payload, headers=get_auth_headers())
-
-    if response.status_code != 200:
-        logging.error(f"ERROR - [graph_query] - Got status code {response.status_code} with {response.json()}")
-        return None
-    else:
-        return response.json()
+    return j1_client.query_v1(query)
 
