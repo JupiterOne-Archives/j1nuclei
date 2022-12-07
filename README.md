@@ -47,7 +47,7 @@ RETURN COUNT(asset)
 FIND UNIQUE * as asset
 THAT HAS >> Finding
 WITH _type = 'nuclei_finding'
-RETURN
+RETURN count(asset) as value
 ```
 
 #### Criticality of the issues?
@@ -71,6 +71,8 @@ You can also create dashboards using our console Insights. For starters, you can
 of this tool [nuclei_portal_schema.json](dashboard_nuclei_portal.json). Steps to create, edit, and upload your own
 dashboard are available from [Getting started with insights-dashboards](https://community.askj1.com/kb/articles/812-getting-started-with-insights-dashboards).
 We also shared many dashboards in our open-source repository from [https://github.com/JupiterOne/insights-dashboards](https://github.com/JupiterOne/insights-dashboards).
+
+<img src="insight-dashboard.png" width="60%" height="60%">
 
 ## Customizing target discovery
 Because getting a comprehensive view may require several queries, j1nuclei use a JSON file [target_query.json](target_query.json)
