@@ -9,7 +9,7 @@ It automates everyday security tasks of scanning endpoints for vulnerabilities. 
 
 The tool can be installed by simply cloning the repository and starting the module.
 
-1. [Get Started](https://info.jupiterone.com/start-account) - If not already using JupiterOne, we offer a free, no credit cards, version -
+1. [Get Started](https://info.jupiterone.com/start-account) - If you're not already using JupiterOne, it's free (no credit card).
 2. Clone repository <br>
 ``git clone git@github.com:JupiterOne/j1nuclei.git``
 3. Get JupiterOne API token<br>

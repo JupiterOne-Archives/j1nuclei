@@ -1,4 +1,4 @@
-j1_account: str = None
+j1_account: str = ""
 nb_nuclei_concurrent: int = 5
 nuclei_extra_parameters: str = ""
 query_file: str = "target_query.json"
