@@ -76,7 +76,7 @@ def get_job_status(job_id: str) -> str:
     """
     api_url = f"https://api.us.jupiterone.io/persister/synchronization/jobs/{job_id}"
     response = requests.get(api_url, headers=get_auth_headers())
-
+    response.raise_for_status()
     logger.debug(f"get job status response for {job_id} - {response.json()}")
 
     return response.json()["job"]["status"]
@@ -91,11 +91,8 @@ def call_persister_upload(job_id: str, payload: Dict) -> None:
     """
     api_url = f"https://api.us.jupiterone.io/persister/synchronization/jobs/{job_id}/upload"
     response = requests.post(api_url, headers=get_auth_headers(), json=payload)
-
+    response.raise_for_status()
     logger.debug(f"call_persister_upload for {job_id} - {response.json()}")
-
-    if response.status_code != 200:
-        raise Exception(f"Error uploading payload to J1 got code error {response.status_code}")
 
 
 def call_persister_job_finalize(job_id: str) -> None:
@@ -106,7 +103,7 @@ def call_persister_job_finalize(job_id: str) -> None:
     """
     api_url = f"https://api.us.jupiterone.io/persister/synchronization/jobs/{job_id}/finalize"
     response = requests.post(api_url, headers=get_auth_headers())
-
+    response.raise_for_status()
     logger.debug(f"call_job_finalize for {job_id} - {response.json()}")
 
 
@@ -119,11 +116,9 @@ def create_persister_job() -> str:
     api_url = "https://api.us.jupiterone.io/persister/synchronization/jobs"
     payload = {"source": "api", "scope": "j1nuclei", "syncMode": "DIFF"}
     response = requests.post(api_url, headers=get_auth_headers(), json=payload)
+    response.raise_for_status()
 
-    if response.status_code == 200:
-        return response.json()["job"]["id"]
-    else:
-        raise Exception(f"Error creating J1 job got code error {response.status_code}")
+    return response.json()["job"]["id"]
 
 
 def graph_query(query: str) -> Dict:
