@@ -3,7 +3,7 @@ import uuid
 import logging
 import os
 
-from j1nuclei.j1api import graph_query,create_persister_job, ingest_data_and_finalize
+from j1nuclei.j1api import graph_query, create_persister_job, ingest_data_and_finalize
 from j1nuclei.nucleirunner import run_nuclei_concurrent
 from typing import List, Dict
 
@@ -12,7 +12,11 @@ import j1nuclei.config
 logger = logging.getLogger(__name__)
 
 
-def run():
+def run() -> None:
+    """
+    Run j1nuclei main flow
+    :return: None
+    """
     process_targets(j1nuclei.config.query_file,
                     j1nuclei.config.nuclei_report_path,
                     j1nuclei.config.nb_nuclei_concurrent)
@@ -21,6 +25,13 @@ def run():
 def process_targets(query_file_path: str,
                     nuclei_report_folder: str,
                     nb_concurrent: int) -> None:
+    """
+    Process specific target
+    :param query_file_path: query file path
+    :param nuclei_report_folder: folder to store nuclei results
+    :param nb_concurrent: number of maximum concurrent nuclei to run
+    :return: None
+    """
 
     with open(query_file_path, "r") as query_file:
         queries = json.load(query_file)
@@ -37,7 +48,7 @@ def process_targets(query_file_path: str,
 
         if data:
             # avoid duplicates
-            for r in data["data"]["queryV1"]["data"]:
+            for r in data["data"]:
                 # check to see if the query returned a target. Some may return emtpy string in query
                 if "target" in r.keys():
                     if r["target"] != "":
@@ -63,13 +74,24 @@ def process_targets(query_file_path: str,
     process_runner_map("report_map.json")
 
 
-def save_runner_mapping(runner_map: Dict, filepath):
+def save_runner_mapping(runner_map: Dict, filepath) -> None:
+    """
+    Save scan target to report mapping
+    :param runner_map: mapping between target and nuclei report file
+    :param filepath: where to save mapping
+    :return: None
+    """
     logger.debug(f"Saving runner mapping to {filepath}")
     with open(filepath, "w") as outfile:
         json.dump(runner_map, outfile)
 
 
-def process_runner_map(filepath: str):
+def process_runner_map(filepath: str) -> None:
+    """
+    Process target reports
+    :param filepath: target to report map
+    :return: None
+    """
     with open(filepath, "r") as runner_map_file:
         runner_map = json.load(runner_map_file)
 
@@ -78,13 +100,15 @@ def process_runner_map(filepath: str):
     if job_id is None:
         raise Exception("Unable to create job id")
 
-    job_keys = []  # used to keep track of all entity and relationships keys and avoid duplicate entry
+    job_keys = dict()  # used to keep track of all entity and relationships keys and avoid duplicate entry
+
     job_payload = dict()
     job_payload["entities"] = []
     job_payload["relationships"] = []
 
     for j1_target_context in runner_map:
-        logger.debug(f"Ingesting data for target {j1_target_context['target']} from {j1_target_context['nuclei_report_file']}")
+        logger.debug(
+            f"Ingesting data for target {j1_target_context['target']} from {j1_target_context['nuclei_report_file']}")
 
         target_payload = parse_target_report(j1_target_context, job_keys)
         if target_payload:
@@ -96,7 +120,14 @@ def process_runner_map(filepath: str):
     logger.debug(f"Done processing runner map {filepath}")
 
 
-def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, job_keys: List) -> Dict:
+def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, job_keys: Dict) -> Dict:
+    """
+    Convert nuclei data to JupiterOne
+    :param j1_target_context: target context
+    :param nuclei_findings: findings
+    :param job_keys: unique entity and relationships keys
+    :return:
+    """
     entities = []
     relationships = []
 
@@ -121,7 +152,7 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
         # this happens when entity has multiple findings
         # we only add 1 instance, but we add all relationships/findings to it
         if finding_entity_key not in job_keys:
-            job_keys.append(finding_entity_key)
+            job_keys[finding_entity_key] = ""
 
             finding_entity = dict()
 
@@ -140,6 +171,8 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
 
         # if we already created it we skip
         if vul_entity_key not in job_keys:
+            job_keys[vul_entity_key] = ""
+
             vul_entity = dict()
             vul_entity["_key"] = vul_entity_key
             vul_entity["_type"] = "nuclei_vulnerability"
@@ -155,7 +188,6 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
             vul_entity["template-id"] = nuclei_finding["template-id"]
             vul_entity["template-url"] = nuclei_finding["template-url"]
 
-            job_keys.append(vul_entity_key)
             entities.append(vul_entity)
 
         # https://community.askj1.com/kb/articles/1157-creating-relationships-between-assets-you-own-and-assets-you-do-not
@@ -165,7 +197,8 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
         has_relationship_key = f"{j1_target_context['key']}_{finding_entity_key}"
 
         if has_relationship_key not in job_keys:
-            job_keys.append(has_relationship_key)
+            job_keys[has_relationship_key] = ""
+
             has_relationship = dict()
             has_relationship["_key"] = has_relationship_key
             has_relationship["_type"] = "nuclei_has"
@@ -186,7 +219,8 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
         is_relationship_key = f"{finding_entity_key}_{vul_entity_key}"
 
         if is_relationship_key not in job_keys:
-            job_keys.append(is_relationship_key)
+            job_keys[is_relationship_key] = ""
+
             is_relationship = dict()
             is_relationship["_key"] = is_relationship_key
             is_relationship["_type"] = "nuclei_is"
@@ -202,7 +236,6 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
 
             relationships.append(is_relationship)
 
-
     payload = dict()
     payload["entities"] = entities
     payload["relationships"] = relationships
@@ -210,7 +243,13 @@ def marshal_nuclei_to_j1payload(j1_target_context: Dict, nuclei_findings: Dict, 
     return payload
 
 
-def parse_target_report(j1_target_context: Dict, job_keys: List) -> Dict:
+def parse_target_report(j1_target_context: Dict, job_keys: Dict) -> Dict:
+    """
+    Parse nuclei report
+    :param j1_target_context: target context
+    :param job_keys: job keys
+    :return: jupiterone formatted report data
+    """
     findings = []
 
     nuclei_report_filename = j1_target_context["nuclei_report_file"]
@@ -229,8 +268,3 @@ def parse_target_report(j1_target_context: Dict, job_keys: List) -> Dict:
             return marshal_nuclei_to_j1payload(j1_target_context, findings, job_keys)
     else:
         return None
-
-
-
-
-

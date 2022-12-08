@@ -7,17 +7,42 @@ import j1nuclei.runner
 
 
 def _get_api_key(env: str) -> str:
+    """
+    :param env: Environment key to retrieve
+    :return: value of the environment variable
+    """
     return os.getenv(env)
+
+
+def _set_global_config(config_namespace: argparse.Namespace) -> None:
+    """
+    Set global configuration state
+    :param config_namespace: argparse namespace
+    :return: None
+    """
+    j1nuclei.config.j1_account = config_namespace.account
+    j1nuclei.config.nb_nuclei_concurrent = config_namespace.concurrent
+    j1nuclei.config.nuclei_extra_parameters = config_namespace.nuclei_params
+    j1nuclei.config.nuclei_report_path = config_namespace.nuclei_report_path
+    j1nuclei.config.query_file = config_namespace.query_file
+    j1nuclei.config.j1_api_key = _get_api_key(config_namespace.apikey_env)
+    j1nuclei.config.persister_scope = config_namespace.scope
+
+    if not j1nuclei.config.j1_api_key:
+        print(f"Error retrieving API key from environment variable {config_namespace.apikey_env}. The api key must be set")
+        raise RuntimeError(f"Unable to retrieve api key from {config_namespace.apikey_env}")
 
 
 class CLI:
     def __init__(self, prog=None):
+        """
+        :param prog: Program name
+        """
         self.prog = prog
         self.parser = self._build_parser()
 
-    def _build_parser(self):
+    def _build_parser(self) -> argparse.ArgumentParser:
         """
-        :rtype: argparse.ArgumentParser
         :return: argument parser.
         """
         parser = argparse.ArgumentParser(
@@ -87,12 +112,11 @@ class CLI:
 
     def main(self, argv: str) -> None:
         """
-        Entrypoint for the command line interface.
-
-        :type argv: string
+        Entrypoint for the command line interface
         :param argv: The parameters supplied to the command line program.
+        :return: None
         """
-        self._set_global_config(self.parser.parse_args(argv))
+        _set_global_config(self.parser.parse_args(argv))
 
         # nuclei doesn't check if the output folder exist and will error out
         # making sure it does
@@ -102,20 +126,11 @@ class CLI:
 
         print("Vulnerability scan completed!")
 
-    def _set_global_config(self, config_namespace: argparse.Namespace) -> None:
-        j1nuclei.config.j1_account = config_namespace.account
-        j1nuclei.config.nb_nuclei_concurrent = config_namespace.concurrent
-        j1nuclei.config.nuclei_extra_parameters = config_namespace.nuclei_params
-        j1nuclei.config.nuclei_report_path = config_namespace.nuclei_report_path
-        j1nuclei.config.query_file = config_namespace.query_file
-        j1nuclei.config.j1_api_key = _get_api_key(config_namespace.apikey_env)
-        j1nuclei.config.persister_scope = config_namespace.scope
-
-        if not j1nuclei.config.j1_api_key:
-            print(f"Error retrieving API key from environment variable {config_namespace.apikey_env}. The api key must be set")
-            raise RuntimeError(f"Unable to retrieve api key from {config_namespace.apikey_env}")
-
-
-def main(argv=None):
+def main(argv=None) -> None:
+    """
+    Main entry point to cli
+    :param argv: command line argument data
+    :return: None
+    """
     argv = argv if argv is not None else sys.argv[1:]
     sys.exit(CLI(prog='j1nuclei').main(argv))
