@@ -37,7 +37,8 @@ def process_targets(query_file_path: str,
         queries = json.load(query_file)
 
     targets = []
-    target_keys = []
+    target_keys = dict()
+    expected_keys = {"key", "target", "scope", "source"}
 
     for q in queries["queries"]:
         logger.debug(f"Processing query {q['name']}")
@@ -49,14 +50,29 @@ def process_targets(query_file_path: str,
         if data:
             # avoid duplicates
             for r in data["data"]:
+
+                # validate that the query return the expected attributes
+                if not expected_keys.issubset(r.keys()):
+                    logger.debug(f"Expected attributes {expected_keys} not present in result for query - {q['query']}")
+                    continue
+
                 # check to see if the query returned a target. Some may return emtpy string in query
                 if "target" in r.keys():
                     if r["target"] != "":
                         q_target_count = q_target_count + 1
                         if not r["key"] in target_keys:
                             r["nuclei_report_file"] = os.path.join(nuclei_report_folder, str(uuid.uuid4()) + ".json")
-                            targets.append(r.copy())
-                            target_keys.append(r["key"])
+
+                            j1_target_context = r.copy()
+
+                            # in some case, the target may be an array based on the node property
+                            # we only scan the first host/ip
+                            if isinstance(j1_target_context["target"], list):
+                                j1_target_context["target"] = j1_target_context["target"][0]
+
+                            targets.append(j1_target_context)
+
+                            target_keys[r["key"]] = ""
         else:
             logger.error(f"Error retrieving results for query name {q['name']}")
 

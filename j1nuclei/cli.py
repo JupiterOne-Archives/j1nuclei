@@ -81,8 +81,8 @@ class CLI:
             '-q',
             '--query-file',
             type=str,
-            default="target_query.json",
-            help='Optional - The file containing targeting queries. By default target_query.json is used',
+            default="targets_discovery.json",
+            help='Optional - The file containing targeting queries. By default targets_discovery.json is used',
         )
         parser.add_argument(
             '-apikey-env',

@@ -29,8 +29,7 @@ The J1QL and knowledge graph can answer many questions, here's a few from the da
 
 #### How many nuclei issues do I have?
 ```
-FIND Finding as f
-WHERE f._type="nuclei_finding"
+FIND nuclei_finding as f
 RETURN count(f) as value
 ```
 
@@ -38,21 +37,19 @@ RETURN count(f) as value
 ```
 FIND *
 WITH tag.Production = true AND classification = 'critical' AS asset
-THAT HAS >> Finding
-WITH _type = 'nuclei_finding'
+THAT HAS >> nuclei_finding
 RETURN COUNT(asset)
 ```
 #### How many endpoints are affected?
 ```
 FIND UNIQUE * as asset
-THAT HAS >> Finding
-WITH _type = 'nuclei_finding'
+THAT HAS >> nuclei_finding
 RETURN count(asset) as value
 ```
 
 #### Criticality of the issues?
 ```
-FIND Finding as f
+FIND nuclei_finding as f
 WHERE f._type = "nuclei_finding"
 RETURN f.severity as x, count(f) as y
 ```
@@ -60,9 +57,8 @@ RETURN f.severity as x, count(f) as y
 #### What are my issues (graph view)?
 ```
 FIND *
-THAT HAS >> Finding
-THAT IS >> Vulnerability as vul
-WHERE vul._type = 'nuclei_vulnerability'
+THAT HAS >> nuclei_finding
+THAT IS >> nuclei_vulnerability
 RETURN TREE
 ```
 
@@ -75,7 +71,7 @@ We also shared many dashboards in our open-source repository from [https://githu
 <img src="insight-dashboard.png" width="60%" height="60%">
 
 ## Customizing target discovery
-Because getting a comprehensive view may require several queries, j1nuclei use a JSON file [target_query.json](target_query.json)
+Because getting a comprehensive view may require several queries, j1nuclei use a JSON file [target_query.json](targets_discovery.json)
 to define all queries to run. The file is populated with common queries by default and is extensible with any J1QL queries.
 For more information on our J1QL language is available from our [support site]("https://community.askj1.com/kb/articles/980-introduction-to-jupiterone-query-language-j1ql") 
 and other questions implementation is available from [JupiterOne Questions library]("https://ask.us.jupiterone.io/filter?tagFilter=all").

@@ -8,7 +8,7 @@
 				"queries": [
 					{
 						"name": "query1",
-						"query": "FIND Finding as w where w._type=\"nuclei_finding\" return count(w) as value"
+						"query": "FIND nuclei_finding as f\nRETURN count(f) as value"
 					}
 				]
 			}
