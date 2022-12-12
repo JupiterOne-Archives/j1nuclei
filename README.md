@@ -10,15 +10,18 @@ It automates everyday security tasks of scanning endpoints for vulnerabilities. 
 The tool can be installed by simply cloning the repository and starting the module.
 
 1. [Get Started](https://info.jupiterone.com/start-account) - If you're not already using JupiterOne, it's free (no credit card).
-2. Clone repository <br>
-``git clone git@github.com:JupiterOne/j1nuclei.git``
+2. Install nuclei<br>
+``pip install nuclei``
+3. Install j1nuclei<br>
+   * PIP ``pip install j1nuclei``
+   * From source ``git clone git@github.com:JupiterOne/j1nuclei.git``
 3. Get JupiterOne API token<br>
 Follow instructions from [Create User and Account API](https://community.askj1.com/kb/articles/785-creating-user-and-account-api-keys) Keys kb article.
 <br>
 4. Export your api key to the environment variable ``J1_API_TOKEN``<br>
 ``export J1_API_TOKEN="<your key>"``
-5. Launch j1nuclei<br>
-<img src="j1nuclei-cli.png" width="60%" height="60%">
+5. Launch j1nuclei from console or terminal<br>
+<img src="j1nuclei-cli.png" width="70%" height="75%">
 
 ## Exploring Findings
 Findings are mapped back into our graph using the following schema<br>
@@ -50,7 +53,7 @@ RETURN count(asset) as value
 #### Criticality of the issues?
 ```
 FIND nuclei_finding as f
-WHERE f._type = "nuclei_finding"
+WHERE f._type = 'nuclei_finding'
 RETURN f.severity as x, count(f) as y
 ```
 
