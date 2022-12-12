@@ -20,11 +20,15 @@ def ingest_data_and_finalize(job_id: str, payload: Dict) -> None:
     :return: None
     """
 
+    print(f"Uploading findings to JupiterOne - jobid {job_id}")
     call_persister_upload(job_id, payload)
     wait_for_job(job_id, "AWAITING_UPLOADS", 1)
 
     logger.debug(f"Completed upload, finalizing job {job_id}")
     call_persister_job_finalize(job_id)
+
+    print(f"Uploading completed merge in progress - jobid {job_id}")
+    print(f"Waiting for merge to complete - jobid {job_id}")
     wait_for_job(job_id, "FINISHED", 1)
 
 

@@ -131,8 +131,11 @@ def process_runner_map(filepath: str) -> None:
             job_payload["entities"].extend(target_payload["entities"])
             job_payload["relationships"].extend(target_payload["relationships"])
 
+    print(f"Merging findings back to JupiterOne account {j1nuclei.config.j1_account}")
+
     ingest_data_and_finalize(job_id, job_payload)
 
+    print("Merging complete!")
     logger.debug(f"Done processing runner map {filepath}")
 
 

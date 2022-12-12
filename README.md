@@ -71,7 +71,7 @@ We also shared many dashboards in our open-source repository from [https://githu
 <img src="insight-dashboard.png" width="60%" height="60%">
 
 ## Customizing target discovery
-Because getting a comprehensive view may require several queries, j1nuclei use a JSON file [target_query.json](targets_discovery.json)
+Because getting a comprehensive view may require several queries, j1nuclei use a JSON file [target_query.json](j1nuclei/targets_discovery.json)
 to define all queries to run. The file is populated with common queries by default and is extensible with any J1QL queries.
 For more information on our J1QL language is available from our [support site]("https://community.askj1.com/kb/articles/980-introduction-to-jupiterone-query-language-j1ql") 
 and other questions implementation is available from [JupiterOne Questions library]("https://ask.us.jupiterone.io/filter?tagFilter=all").

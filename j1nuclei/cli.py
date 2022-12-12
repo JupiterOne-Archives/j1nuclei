@@ -29,7 +29,8 @@ def _set_global_config(config_namespace: argparse.Namespace) -> None:
     j1nuclei.config.persister_scope = config_namespace.scope
 
     if not j1nuclei.config.j1_api_key:
-        print(f"Error retrieving API key from environment variable {config_namespace.apikey_env}. The api key must be set")
+        print(
+            f"Error retrieving API key from environment variable {config_namespace.apikey_env}. The api key must be set")
         raise RuntimeError(f"Unable to retrieve api key from {config_namespace.apikey_env}")
 
 
@@ -81,7 +82,7 @@ class CLI:
             '-q',
             '--query-file',
             type=str,
-            default="targets_discovery.json",
+            default=f"{os.path.dirname(os.path.abspath(__file__))}/targets_discovery.json",
             help='Optional - The file containing targeting queries. By default targets_discovery.json is used',
         )
         parser.add_argument(
@@ -125,6 +126,7 @@ class CLI:
         j1nuclei.runner.run()
 
         print("Vulnerability scan completed!")
+
 
 def main(argv=None) -> None:
     """
