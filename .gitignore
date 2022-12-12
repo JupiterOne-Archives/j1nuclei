@@ -1,0 +1,8 @@
+*.pyc
+.idea/
+reports/*
+report_map.json
+.DS_Store
+build/
+dist/
+j1nuclei.egg-info/

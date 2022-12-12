@@ -1,0 +1,24 @@
+{
+    "queries": [
+        {
+            "name": "Exposed to everyone",
+            "query": "Find Everyone that ALLOWS * as d RETURN d._key as key, coalesce(d.baseUrl, d.url) as target, d._integrationInstanceId as scope, d._source as source"
+        },
+        {
+            "name": "Get domains",
+            "query": "FIND Domain as d RETURN d._key as key, d.displayName as target, d._integrationInstanceId as scope, d._source as source"
+        },
+        {
+            "name": "Get domain cname,a,aaa records",
+            "query": "FIND DomainRecord as d WHERE d.type = 'CNAME' OR d.type = 'A' or d.type = 'AAA' RETURN d._key as key, d.name as target, d._integrationInstanceId as scope, d._source as source"
+        },
+        {
+            "name": "Get data stores",
+            "query": "FIND DataStore as d RETURN d._key as key, d.baseUrl as target, d._integrationInstanceId as scope, d._source as source"
+        },
+        {
+            "name":"Get all public ip address",
+            "query": "FIND unique (Host|NetworkInterface) WITH publicIpAddress != undefined as ip RETURN ip._key as key, ip.publicIpAddress as target, ip._integrationDefinitionId as scope, ip._source as source"
+        }
+    ]
+}

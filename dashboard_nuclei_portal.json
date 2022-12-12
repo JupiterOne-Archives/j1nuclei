@@ -1,0 +1,195 @@
+{
+	"widgets": [
+		{
+			"id": "19a61314-b3b7-4138-bba4-2429aaf5915b",
+			"title": "# of findings",
+			"type": "number",
+			"config": {
+				"queries": [
+					{
+						"name": "query1",
+						"query": "FIND nuclei_finding as f\nRETURN count(f) as value"
+					}
+				]
+			}
+		},
+		{
+			"id": "6110c88c-a763-4fc5-991a-5faf27869259",
+			"title": "Issue graph",
+			"type": "graph",
+			"config": {
+				"queries": [
+					{
+						"name": "query1",
+						"query": "FIND *\nTHAT HAS >> Finding \nTHAT IS >> Vulnerability as vul\nWHERE vul._type = 'nuclei_vulnerability'\nRETURN TREE"
+					}
+				]
+			}
+		},
+		{
+			"id": "df53564c-e179-4703-92e2-f08df4191b2c",
+			"title": "# of affected assets",
+			"type": "number",
+			"config": {
+				"queries": [
+					{
+						"name": "query1",
+						"query": "FIND UNIQUE * as asset\nTHAT HAS >> Finding\nWITH _type = 'nuclei_finding'\nRETURN count(asset) as value"
+					}
+				]
+			}
+		},
+		{
+			"id": "90f1f350-0a0d-4dc1-95c1-9c23fed9d4e4",
+			"title": "Production Critical - Findings",
+			"type": "bar",
+			"config": {
+				"queries": [
+					{
+						"name": "Findings",
+						"query": "FIND * as target\nTHAT HAS >> Finding as f WHERE\ntarget.tag.Production = true AND\ntarget.classification = \"critical\" AND\nf._type = \"nuclei_finding\"\nreturn f.severity as x, count(f) as y"
+					}
+				]
+			}
+		},
+		{
+			"id": "bc7fcab8-bc35-46da-8d16-a07076f4997d",
+			"title": "# of critical assets affected",
+			"type": "number",
+			"config": {
+				"queries": [
+					{
+						"name": "query1",
+						"query": "FIND *\nWITH tag.Production = true AND classification = 'critical' AS asset\nTHAT HAS >> Finding\nWITH _type = 'nuclei_finding'\nRETURN COUNT(asset) as value"
+					}
+				]
+			}
+		},
+		{
+			"id": "6e74fab5-d955-4ea2-bd93-030a46bdc250",
+			"title": "Total Findings",
+			"type": "bar",
+			"config": {
+				"queries": [
+					{
+						"name": "Findings",
+						"query": "FIND * as target\nTHAT HAS >> Finding as f WHERE\nf._type = \"nuclei_finding\"\nreturn f.severity as x, count(f) as y"
+					}
+				]
+			}
+		},
+		{
+			"id": "3e5fb37a-863b-450c-8c2f-87732b62eb3d",
+			"title": "# of findings for critical assets",
+			"type": "number",
+			"config": {
+				"queries": [
+					{
+						"name": "query1",
+						"query": "FIND * as target\nTHAT HAS >> Finding as f WHERE\ntarget.tag.Production = true AND\ntarget.classification = \"critical\" AND\nf._type = \"nuclei_finding\"\nreturn count(f) as value"
+					}
+				]
+			}
+		}
+	],
+	"layouts": {
+		"sm": [],
+		"xs": [],
+		"lg": [
+			{
+				"static": false,
+				"w": 3,
+				"moved": false,
+				"h": 1,
+				"x": 0,
+				"y": 0,
+				"i": "19a61314-b3b7-4138-bba4-2429aaf5915b"
+			},
+			{
+				"static": false,
+				"w": 12,
+				"moved": false,
+				"h": 3,
+				"x": 0,
+				"y": 2,
+				"i": "6110c88c-a763-4fc5-991a-5faf27869259"
+			},
+			{
+				"static": false,
+				"w": 3,
+				"moved": false,
+				"h": 1,
+				"x": 3,
+				"y": 0,
+				"i": "df53564c-e179-4703-92e2-f08df4191b2c"
+			},
+			{
+				"static": false,
+				"w": 4,
+				"moved": false,
+				"h": 1,
+				"x": 7,
+				"y": 1,
+				"i": "90f1f350-0a0d-4dc1-95c1-9c23fed9d4e4"
+			},
+			{
+				"static": false,
+				"w": 3,
+				"moved": false,
+				"h": 1,
+				"x": 3,
+				"y": 1,
+				"i": "bc7fcab8-bc35-46da-8d16-a07076f4997d"
+			},
+			{
+				"static": false,
+				"w": 4,
+				"moved": false,
+				"h": 1,
+				"x": 7,
+				"y": 0,
+				"i": "6e74fab5-d955-4ea2-bd93-030a46bdc250"
+			},
+			{
+				"static": false,
+				"w": 3,
+				"moved": false,
+				"h": 1,
+				"x": 0,
+				"y": 1,
+				"i": "3e5fb37a-863b-450c-8c2f-87732b62eb3d"
+			}
+		],
+		"xl": [],
+		"md": [
+			{
+				"x": 0,
+				"h": 2,
+				"i": "19a61314-b3b7-4138-bba4-2429aaf5915b",
+				"y": 1000000000000,
+				"w": 6
+			},
+			{
+				"x": 0,
+				"h": 2,
+				"i": "6110c88c-a763-4fc5-991a-5faf27869259",
+				"y": 1000000000000,
+				"w": 6
+			},
+			{
+				"x": 0,
+				"h": 2,
+				"i": "df53564c-e179-4703-92e2-f08df4191b2c",
+				"y": 1000000000000,
+				"w": 6
+			},
+			{
+				"x": 0,
+				"h": 2,
+				"i": "90f1f350-0a0d-4dc1-95c1-9c23fed9d4e4",
+				"y": 1000000000000,
+				"w": 6
+			}
+		]
+	}
+}
